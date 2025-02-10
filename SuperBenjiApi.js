@@ -8,9 +8,8 @@ const https = require('https')
 const fs = require('fs')
 
 const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/server.superbenji.net/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/server.superbenji.net/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/server.superbenji.net/chain.pem')
+    key: fs.readFileSync('/etc/letsencrypt/live/api.omnicronical.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.omnicronical.com/cert.pem')
 }
 
 app.use(bodyParser.json() , cors())
