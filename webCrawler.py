@@ -1,10 +1,10 @@
 import asyncio
 from crawl4ai import *
 
-async def main():
+async def main(sentUrl):
     async with AsyncWebCrawler() as crawler:
         result = await crawler.arun(
-            url="https://superbenji.ai",
+            url=sentUrl,
         )
         print(result.markdown)
 
