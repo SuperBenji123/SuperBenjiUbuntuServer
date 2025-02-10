@@ -9,7 +9,7 @@ const fs = require('fs')
 
 const options = {
     key: fs.readFileSync('/etc/letsencrypt/live/api.omnicronical.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/api.omnicronical.com/cert.pem')
+    cert: fs.readFileSync('/etc/letsencrypt/live/api.omnicronical.com/fullchain.pem')
 }
 
 app.use(bodyParser.json() , cors())
