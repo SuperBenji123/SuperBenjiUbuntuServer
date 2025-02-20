@@ -7,7 +7,7 @@ async def main(sentUrl):
         result = await crawler.arun(
             url=sentUrl,
         )
-        print(result.markdown)
+        print(result.model_dump_json)
 
 if __name__ == "__main__":
     # Read URL from command-line arguments
