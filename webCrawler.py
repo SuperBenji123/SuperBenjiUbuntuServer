@@ -1,12 +1,16 @@
 import asyncio
 import sys
+import sys
 from crawl4ai import *
 
+async def main(sentUrl):
 async def main(sentUrl):
     async with AsyncWebCrawler() as crawler:
         result = await crawler.arun(
             url=sentUrl,
+            url=sentUrl,
         )
+        print(result.model_dump_json)
         print(result.model_dump_json)
 
 if __name__ == "__main__":
