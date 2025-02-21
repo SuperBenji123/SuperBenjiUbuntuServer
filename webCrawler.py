@@ -4,7 +4,6 @@ import sys
 from crawl4ai import *
 
 async def main(sentUrl):
-async def main(sentUrl):
     async with AsyncWebCrawler() as crawler:
         result = await crawler.arun(
             url=sentUrl,
