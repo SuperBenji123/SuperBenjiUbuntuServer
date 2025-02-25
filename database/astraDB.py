@@ -8,6 +8,17 @@ cloud_config= {
   'secure_connect_bundle': 'c:/Users/theex/SuperBenjiUbuntuServer/database/secure-connect-superbenjidb.zip'
 }
 
+default_client_style = (1, [], [], 
+                        "this is a message to a very important person. Use more formal language and tone throughout",
+                        "be positive about the content regarding the prospect but not too positive",
+                        "professional",
+                        "Invite the prospect to a lunch",
+                        "reply to this email to sign up",
+                        "Hi, [ProspectName]",
+                        "Kind regards,",
+                        "UK English",
+                        0.5)
+
 def connectToNormalDB():
     with open("c:/Users/theex/SuperBenjiUbuntuServer/database/SuperBenjiDB-token.json") as f:
         secrets = json.load(f)
@@ -39,7 +50,7 @@ def createTablesDB():
     ).format(keyspace=keyspace))
 
     session.execute((
-        "DROP TABLE IF EXISTS {keyspace}.prospect_emails;"
+        "DROP TABLE IF EXISTS {keyspace}.prospect_sequence;"
     ).format(keyspace=keyspace))
 
     session.execute((
@@ -61,23 +72,23 @@ def createTablesDB():
         "campaign_id TEXT, "
         "campaign_type INT, "
         "prospect_ids LIST<INT>, "
-        "email_ids LIST<INT>, "
+        "context_email_ids LIST<INT>, "
         "formality TEXT, "
         "flattery TEXT, "
         "style TEXT, "
         "hook TEXT, "
         "CTA TEXT, "
         "greeting TEXT, "
-        "signOff TEXT, "
+        "sign_off TEXT, "
         "language TEXT, "
-        "temperature TEXT, "
+        "temperature FLOAT, "
         "PRIMARY KEY (client_id, campaign_id) );"
     ).format(keyspace=keyspace))
 
     print("Client_Identity Table Created.")
 
     session.execute((
-        "CREATE TABLE IF NOT EXISTS {keyspace}.prospect_emails ("
+        "CREATE TABLE IF NOT EXISTS {keyspace}.prospect_sequence ("
         "prospect_id INT PRIMARY KEY, "
         "email_one UUID, "
         "email_two UUID, "
@@ -85,12 +96,12 @@ def createTablesDB():
         "email_four UUID, "
         "reply TEXT, "
         "linkedin_connection_request UUID, "
-        "accepted BOOL, "
+        "accepted BOOLEAN, "
         "linkedin_one UUID, "
         "linkedin_two UUID, "
         "linkedin_three UUID, "
         "linkedin_four UUID, "
-        "linkedin_reply TEXT, "
+        "linkedin_reply TEXT); "
     ).format(keyspace=keyspace))
 
     print("Prospect_Sequence Table Created.")
@@ -109,6 +120,21 @@ def addDataToTable():
         session.execute(
             f"INSERT INTO {keyspace}.client_data (client_id, first_name, last_name, job_title, email, company_name, overview, phone_number) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (client_id, first_name, last_name, job_title, email, company_name, overview, phone_number)
+        )
+
+def addClientToDB(client_info, campaign_id):
+    keyspace = "super_benji_client_information"
+
+    client_id, first_name, last_name, job_title, email, company_name, overview, phone_number = client_info
+    session.execute(
+            f"INSERT INTO {keyspace}.client_data (client_id, first_name, last_name, job_title, email, company_name, overview, phone_number) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (client_id, first_name, last_name, job_title, email, company_name, overview, phone_number)
+        )
+    
+    campaign_type, prospect_ids, context_email_ids, formality, flattery, style, hook, CTA, greeting, sign_off, language, temperature = default_client_style
+    session.execute(
+            f"INSERT INTO {keyspace}.client_identity (client_id, campaign_id, campaign_type, prospect_ids, context_email_ids, formality, flattery, style, hook, CTA, greeting, sign_off, language, temperature) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (client_id, campaign_id, campaign_type, prospect_ids, context_email_ids, formality, flattery, style, hook, CTA, greeting, sign_off, language, temperature)
         )
 
 def findDataFromTable(client_id):
@@ -169,10 +195,10 @@ def connectToVectorDB():
 # vectorSearch()
 session = connectToNormalDB()
 createTablesDB()
-addDataToTable()
-findDataFromTable(1)
+#addDataToTable()
+
 connectToVectorDB()
 
-
-
-
+test_client_info = (1,	"Helen", "Soden", "CEO", "helen@wearehullabaloo.com", "Hullabaloo", "Hullabaloo is a dynamic storytelling agency dedicated to helping brands connect with young audiences by leveraging engaging, narrative-driven content across various media platforms. Founded by three experienced content creators, Hullabaloo pursues both critical and commercial success, enhancing audience growth and interaction through innovative storytelling. The agency specialises in content appealing to children and families, collaborating with established brands like Disney, Apple, and Netflix to craft compelling narratives. With a talented team including industry veterans such as Helen Soden, Matt René, and Jack Jameson, Hullabaloo consistently delivers warmth, humour, and integrity in its productions. Their expertise extends to devising social media strategies for high-profile personalities, underlining their adaptability in an ever-evolving marketplace. Hullabaloo encourages potential clients to initiate partnerships via their contact form, bolstering their social media presence on platforms such as LinkedIn and Instagram. Their services are meticulously tailored to amplify brand narratives and forge meaningful connections with youthful demographics worldwide.", "7734346619")
+addClientToDB(test_client_info, "ABC")
+findDataFromTable(1)
