@@ -8,6 +8,8 @@ cloud_config= {
   'secure_connect_bundle': 'c:/Users/theex/SuperBenjiUbuntuServer/database/secure-connect-superbenjidb.zip'
 }
 
+keyspace = "super_benji_client_information"
+
 default_client_style = (1, [], [], 
                         "this is a message to a very important person. Use more formal language and tone throughout",
                         "be positive about the content regarding the prospect but not too positive",
@@ -39,8 +41,6 @@ def connectToNormalDB():
     return(DBsession)
 
 def createTablesDB():
-    keyspace = "super_benji_client_information"
-
     session.execute((
         "DROP TABLE IF EXISTS {keyspace}.client_data;"
     ).format(keyspace=keyspace))
@@ -108,8 +108,6 @@ def createTablesDB():
 
 
 def addDataToTable():
-    keyspace = "super_benji_client_information"
-
     text_blocks = [
         (1,	"Helen", "Soden", "CEO", "helen@wearehullabaloo.com", "Hullabaloo", "Hullabaloo is a dynamic storytelling agency dedicated to helping brands connect with young audiences by leveraging engaging, narrative-driven content across various media platforms. Founded by three experienced content creators, Hullabaloo pursues both critical and commercial success, enhancing audience growth and interaction through innovative storytelling. The agency specialises in content appealing to children and families, collaborating with established brands like Disney, Apple, and Netflix to craft compelling narratives. With a talented team including industry veterans such as Helen Soden, Matt René, and Jack Jameson, Hullabaloo consistently delivers warmth, humour, and integrity in its productions. Their expertise extends to devising social media strategies for high-profile personalities, underlining their adaptability in an ever-evolving marketplace. Hullabaloo encourages potential clients to initiate partnerships via their contact form, bolstering their social media presence on platforms such as LinkedIn and Instagram. Their services are meticulously tailored to amplify brand narratives and forge meaningful connections with youthful demographics worldwide.", "7734346619"),
         (2,	"Aidan", "Lethem", "CEO", "aidan.lethem@cocubed.com", "CoCubed", "Co:cubed partners with corporate leaders to accelerate innovation by connecting them to a global network of 12 million startups. They help corporates build and execute startup collaboration programmes, aiming to drive impactful and scalable solutions to significant challenges. Co:cubed's offerings include upfront strategic consulting, event-based engagements, curated startup access, and a white-labelled online platform for collaboration and workflow management. Their unique Co:Create process transforms ideas into in-market pilots within three months, fostering a future of more collaborative, innovative, and sustainable corporate operations. Trusted by Fortune 200 companies, Co:cubed is dedicated to reshaping corporate innovation landscapes.", "7735527191"),
@@ -123,8 +121,6 @@ def addDataToTable():
         )
 
 def addClientToDB(client_info, campaign_id):
-    keyspace = "super_benji_client_information"
-
     client_id, first_name, last_name, job_title, email, company_name, overview, phone_number = client_info
     session.execute(
             f"INSERT INTO {keyspace}.client_data (client_id, first_name, last_name, job_title, email, company_name, overview, phone_number) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
@@ -138,12 +134,31 @@ def addClientToDB(client_info, campaign_id):
         )
 
 def findDataFromTable(client_id):
-    keyspace = "super_benji_client_information"
-
     query = (f"SELECT * FROM {keyspace}.client_data WHERE client_id = {client_id};")
 
     for row in session.execute(query):
         print(f"Client Found: {row}")
+
+def searchClientData(query_parameters):
+    query = (f"SELECT * FROM {keyspace}.client_data WHERE {query_parameters[0]} = {query_parameters[1]};")
+    result = []
+    for row in session.execute(query):
+        result.append(row)
+    return(result)
+
+def searchClientIdentity(query_parameters):
+    query = (f"SELECT * FROM {keyspace}.client_identity WHERE {query_parameters[0]} = {query_parameters[1]};")
+    result = []
+    for row in session.execute(query):
+        result.append(row)
+    return(result)
+
+def searchProspectSequence(query_parameters):
+    query = (f"SELECT * FROM {keyspace}.prospect_sequence WHERE {query_parameters[0]} = {query_parameters[1]};")
+    result = []
+    for row in session.execute(query):
+        result.append(row)
+    return(result)
 
 def vectorSearch():
     # Perform a vector search
@@ -201,4 +216,5 @@ connectToVectorDB()
 
 test_client_info = (1,	"Helen", "Soden", "CEO", "helen@wearehullabaloo.com", "Hullabaloo", "Hullabaloo is a dynamic storytelling agency dedicated to helping brands connect with young audiences by leveraging engaging, narrative-driven content across various media platforms. Founded by three experienced content creators, Hullabaloo pursues both critical and commercial success, enhancing audience growth and interaction through innovative storytelling. The agency specialises in content appealing to children and families, collaborating with established brands like Disney, Apple, and Netflix to craft compelling narratives. With a talented team including industry veterans such as Helen Soden, Matt René, and Jack Jameson, Hullabaloo consistently delivers warmth, humour, and integrity in its productions. Their expertise extends to devising social media strategies for high-profile personalities, underlining their adaptability in an ever-evolving marketplace. Hullabaloo encourages potential clients to initiate partnerships via their contact form, bolstering their social media presence on platforms such as LinkedIn and Instagram. Their services are meticulously tailored to amplify brand narratives and forge meaningful connections with youthful demographics worldwide.", "7734346619")
 addClientToDB(test_client_info, "ABC")
-findDataFromTable(1)
+addClientToDB(test_client_info, "ABCDE")
+print(searchClientIdentity(("client_id", 1)))
