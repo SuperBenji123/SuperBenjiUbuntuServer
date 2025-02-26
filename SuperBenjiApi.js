@@ -22,7 +22,7 @@ app.post('/crawl', (req, res) => {
     }
 
     // Pass the URL to the Python script
-    const pythonProcess = exec(`python3 webCrawler.py "${url}"`, (error, stdout, stderr) => {
+    const pythonProcess = exec(`/application/SuperBenjiUbuntuServer/env/bin/python3 /application/SuperBenjiUbuntuServer/webCrawler.py "${url}"`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return res.status(500).json({ error: 'Failed to execute Python script' });
@@ -34,6 +34,10 @@ app.post('/crawl', (req, res) => {
         res.status(200).json({ result: stdout.trim() });
     });
 });
+
+app.post('/query', (req, res) => {
+    
+})
 
 app.get('/', (req, res) => {
     res.send('Welcome to Nodejs API Project')
