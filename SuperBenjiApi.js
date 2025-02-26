@@ -25,7 +25,7 @@ app.post('/crawl', (req, res) => {
     const pythonProcess = exec(`/application/SuperBenjiUbuntuServer/env/bin/python3 /application/SuperBenjiUbuntuServer/webCrawler.py "${url}"`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
-            return res.status(500).json({ error: 'Failed to execute Python script' });
+            return res.status(500).json({ error: 'Failed to execute Python script', details: error.message });
         }
         if (stderr) {
             console.error(`Stderr: ${stderr}`);
