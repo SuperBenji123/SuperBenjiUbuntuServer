@@ -22,7 +22,7 @@ app.post('/crawl', (req, res) => {
     }
 
     // Pass the URL to the Python script
-    const pythonProcess = exec(`/appl/SuperBenjiAPIServer/SuperBenjiUbuntuServer/env/bin/python3 /application/SuperBenjiUbuntuServer/webCrawler.py "${url}"`, (error, stdout, stderr) => {
+    const pythonProcess = exec(`/appl/SuperBenjiAPIServer/SuperBenjiUbuntuServer/env/bin/python3 /appl/SuperBenjiAPIServer/SuperBenjiUbuntuServer/webCrawler.py "${url}"`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return res.status(500).json({ error: 'Failed to execute Python script', details: error.message });
