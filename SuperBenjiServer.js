@@ -33,17 +33,24 @@ app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
     res.sendFile(__dirname + '/.well-known/microsoft-identity-association.json');
 });
 
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'healthy',
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        timestamp: new Date().toISOString()
+    });
+});
+
 app.post('/crawl', (req, res) => {
     const { url } = req.body
-
     if (!url) {
         return res.status(400).json({ error: 'URL is required' })
     }
-
-    const pythonProcess = exec(`cd /appl/SuperBenji && /appl/SuperBenji/myenv/bin/python3 webCrawler.py "${url}"`, (error, stdout, stderr) => {
+    const pythonProcess = exec(`cd /appl/SuperBenji && timeout 300 /appl/SuperBenji/myenv/bin/python3 webCrawler.py "${url}"`, { timeout: 300000 }, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`)
-            return res.status(500).json({ error: 'Failed to execute Python script' })
+            return res.status(500).json({ error: 'Failed to execute Python script', details: error.message })
         }
         if (stderr) {
             console.error(`Stderr: ${stderr}`)
